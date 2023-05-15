@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{dashboard/index.html}">
+
+<head></head>
+
+<body>
+    <section layout:fragment="content">
+        <div th:if="${messageSuccess != null}" class="alert alert-success" role="alert">
+            <i th:text="${messageSuccess}"></i>
+        </div>
+        <div th:if="${messageDanger != null}" class="alert alert-danger" role="alert">
+            <i th:text="${messageDanger}"></i>
+        </div>
+        <form th:action="@{/admin/product/productManage}" method="post" enctype="multipart/form-data"
+            th:object="${imageProductDTO}">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            th:text="${imageProductDTO.isEdit? 'Chỉnh sửa thông tin sản phẩm' : 'Thêm mới sản phẩm'}">
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{isEdit}" />
+                        <div class="form-group mt-2">
+                            <input type="text" class="form-control" name="productId" id="productId"
+                                aria-describedby="productId" placeholder="productId" th:field="*{productId}" readonly
+                                hidden />
+                        </div>
+                        <div class="col-sm-12 row">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="productName">Tên sản phẩm:</label>
+                                    <input type="text" class="form-control" name="productName" th:classappend="${#fields.hasErrors('productName')}? is-invalid : ''"
+                                        id="productName" aria-describedby="productNameHId" placeholder="Tên sản phẩm"
+                                        th:field="*{productName}" />
+                                    <small id="productName" th:if="${#fields.hasErrors('productName')}"
+                                        th:class="${#fields.hasErrors('productName')}? invalid-feedback : ''"
+                                        th:errors="*{productName}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="quantity">Số lượng sản phẩm:</label>
+                                    <input type="number" class="form-control" name="quantity" id="quantity"
+                                        th:classappend="${#fields.hasErrors('quantity')}? is-invalid : ''"
+                                        aria-describedby="quantityHId" placeholder="Số lượng sản phẩm"
+                                        th:field="*{quantity}" />
+                                    <small id="quantity" th:if="${#fields.hasErrors('quantity')}"
+                                        th:class="${#fields.hasErrors('quantity')}? invalid-feedback : ''"
+                                        th:errors="*{quantity}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="priceIn">Giá nhập:</label>
+                                    <input type="number" class="form-control" name="priceIn" id="priceIn"
+                                        th:classappend="${#fields.hasErrors('priceIn')}? is-invalid : ''"
+                                        aria-describedby="priceInHId" placeholder="Giá nhập" th:field="*{priceIn}" />
+                                    <small id="priceIn" th:if="${#fields.hasErrors('priceIn')}"
+                                        th:class="${#fields.hasErrors('priceIn')}? invalid-feedback : ''"
+                                        th:errors="*{priceIn}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="priceTag">Giá bán:</label>
+                                    <input type="number" class="form-control" name="priceTag" id="priceTag"
+                                        th:classappend="${#fields.hasErrors('priceTag')}? is-invalid : ''"
+                                        aria-describedby="priceTagHId" placeholder="Giá bán" th:field="*{priceTag}" />
+                                    <small id="priceTag" th:if="${#fields.hasErrors('priceTag')}"
+                                        th:class="${#fields.hasErrors('priceTag')}? invalid-feedback : ''"
+                                        th:errors="*{priceTag}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="categoryId">Loại sản phẩm:</label>
+                                    <select class="form-control" name="categoryId" id="categoryId"
+                                        th:classappend="${#fields.hasErrors('categoryId')}? is-invalid : ''"
+                                        th:field="*{categoryId}">
+                                        <option value="-1" selected>Chưa chọn</option>
+                                        <option th:each="item : ${categories}" th:value="${item.id}"
+                                            th:text="${item.categoryName}"
+                                            th:selected="${item.id == imageProductDTO.categoryId}"></option>
+                                    </select>
+                                    <small id="categoryId" th:if="${#fields.hasErrors('categoryId')}"
+                                        th:class="${#fields.hasErrors('categoryId')}? invalid-feedback : ''"
+                                        th:errors="*{categoryId}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="brandId">Tên thương hiệu:</label>
+                                    <select class="form-control" name="brandId" id="brandId"
+                                        th:classappend="${#fields.hasErrors('brandId')}? is-invalid : ''"
+                                        th:field="*{brandId}">
+                                        <option value="-1" selected>Chưa chọn</option>
+                                        <option th:each="item : ${brands}" th:value="${item.id}"
+                                            th:text="${item.brandName}" th:selected="${item.id == imageProductDTO.brandId}">
+                                        </option>
+                                    </select>
+                                    <small id="categoryId" th:if="${#fields.hasErrors('brandId')}"
+                                        th:class="${#fields.hasErrors('brandId')}? invalid-feedback : ''"
+                                        th:errors="*{brandId}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="discountId">Tên loại giảm giá:</label>
+                                    <select class="form-control" name="discountId" id="discountId"
+                                        th:classappend="${#fields.hasErrors('discountId')}? is-invalid : ''"
+                                        th:field="*{discountId}">
+                                        <option value="-1" selected>Chưa chọn</option>
+                                        <option th:each="item : ${discounts}" th:value="${item.id}"
+                                            th:text="${item.eventName} "
+                                            th:selected="${item.id == imageProductDTO.discountId}"></option>
+                                    </select>
+                                    <small id="discountId" th:if="${#fields.hasErrors('discountId')}"
+                                        th:class="${#fields.hasErrors('discountId')}? invalid-feedback : ''"
+                                        th:errors="*{discountId}"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mt-3 row">
+                                <div class="col-sm-12 row">
+                                    <label for="files">Chọn ảnh sản phẩm: </label>
+                                </div>
+                                <div class="col-sm-12 mb-3 row">
+                                    <input id="files" type="file" accept="image/*" th:value="${imageProductDTO.imgFiles}" th:field="*{imgFiles}" multiple />
+                                </div>
+                                <div id="preview" class="col-sm-12 row"></div>
+                            </div>
+                            <!-- <img th:src="${imageDTO.imageUrl!= null ? '/admin/image/images/' + imageDTO.imageUrl : '/admin/image/images/default.png'}"
+                                    id="image" width="90%" class="img-fluid" />
+                                <div class="form-group">
+                                    <label for="bottleImage">image file:</label>
+                                    <input type="file" name="imgFile" id="fileinput" class="form-control-file"
+                                        placeholder="bottle image" onchange="chooseFile(this)"
+                                        aria-describedby="bottleImageHid" multiple/>
+                                    <input type="text" th:value="${imageDTO.imageUrl}" th:field="*{imageUrl}" multiple
+                                        />
+                                </div> -->
+                        </div>
+                    </div>
+                    <div class="modal-footer col-lg-12">
+                        <div class="col-lg-6 offset-sm-6 text-right">
+                            <a type="button" class="btn btn-secondary"
+                                th:href="@{/admin/product/productManage}"><span>&times; </span>Close</a>
+                            <button type="submit" class="btn btn-primary">
+                                <span><img th:src="@{/img/icons/save.svg}" aria-label="chi tiết" /></span>
+                                <span th:text="${imageProductDTO.isEdit? 'Cập nhật' : 'Thêm mới'}">
+                                    Save changes</span>
+                            </button>
+                            <button type="reset" th:if="${imageProductDTO.isEdit == false}" class="btn btn-info">
+                                Làm mới
+                            </button>
+                            <a class="btn btn-danger" th:data-id="${imageProductDTO.id}" th:if="${imageProductDTO.isEdit == true}"
+                                th:data-name="${imageProductDTO.productName}"
+                                onclick="showConfirmModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"><img
+                                    th:src="@{/img/icons/trash.svg}" /> Xóa</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Modal delete -->
+        <div class="modal fade" id="confirmationId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Bạn có muốn xóa sản phẩm này?</div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const preview = (file) => {
+                const fr = new FileReader();
+                fr.onload = () => {
+                    const img = document.createElement("img");
+                    img.src = fr.result; // String Base64
+                    img.alt = file.name;
+                    img.style.maxHeight = "120px";
+                    img.style.margin = "5px";
+                    document.querySelector("#preview").append(img);
+                };
+                fr.readAsDataURL(file);
+            };
+
+            document.querySelector("#files").addEventListener("change", (ev) => {
+                if (!ev.target.files) return; // Do nothing.
+                [...ev.target.files].forEach(preview);
+            });
+        </script>
+    </section>
+</body>
+
+</html>
